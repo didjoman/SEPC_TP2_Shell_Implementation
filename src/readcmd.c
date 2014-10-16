@@ -50,6 +50,7 @@ static char *readline(char *prompt)
 	char *buf = xmalloc(buf_len * sizeof(char));
 
 	printf(prompt);
+
 	if (fgets(buf, buf_len, stdin) == NULL) {
 		free(buf);
 		return NULL;

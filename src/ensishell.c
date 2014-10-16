@@ -10,10 +10,12 @@
 
 #include "variante.h"
 #include "readcmd.h"
+#include "execcmd.h"
 
 #ifndef VARIANTE
 #error "Variante non défini !!"
 #endif
+
 
 int main() {
         printf("Variante %d: %s\n", VARIANTE, VARIANTE_STRING);
@@ -47,8 +49,17 @@ int main() {
 			printf("seq[%d]: ", i);
                         for (j=0; cmd[j]!=0; j++) {
                                 printf("'%s' ", cmd[j]);
+
                         }
 			printf("\n");
 		}
+
+		/* Execute the command : */
+		if(!exec_cmd(l)){
+			fprintf(stderr, "Failed to execute the command.");
+			exit(EXIT_FAILURE);
+		}
+		// TODO : récuperer la mémoire
+		//free_cmd(l); // TODO: à verifier
 	}
 }
