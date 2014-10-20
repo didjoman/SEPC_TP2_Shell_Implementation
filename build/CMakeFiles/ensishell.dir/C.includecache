@@ -9,6 +9,10 @@
 /home/alexandre/documents/cours/2A/SEPC/sepc_tp2/src/execcmd.c
 execcmd.h
 /home/alexandre/documents/cours/2A/SEPC/sepc_tp2/src/execcmd.h
+readcmd.h
+/home/alexandre/documents/cours/2A/SEPC/sepc_tp2/src/readcmd.h
+string.h
+-
 
 /home/alexandre/documents/cours/2A/SEPC/sepc_tp2/src/execcmd.h
 stdbool.h

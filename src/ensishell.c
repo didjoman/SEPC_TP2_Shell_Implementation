@@ -18,11 +18,11 @@
 
 
 int main() {
-        printf("Variante %d: %s\n", VARIANTE, VARIANTE_STRING);
+    printf("Variante %d: %s\n", VARIANTE, VARIANTE_STRING);
+    //init_jobs();
 
 	while (1) {
 		struct cmdline *l;
-		int i, j;
 		char *prompt = "ensishell>";
 
 		l = readcmd(prompt);
@@ -44,6 +44,8 @@ int main() {
 		if (l->bg) printf("background (&)\n");
 
 		/* Display each command of the pipe */
+		/*
+		int i, j;
 		for (i=0; l->seq[i]!=0; i++) {
 			char **cmd = l->seq[i];
 			printf("seq[%d]: ", i);
@@ -53,7 +55,7 @@ int main() {
                         }
 			printf("\n");
 		}
-
+		*/
 		/* Execute the command : */
 		if(!exec_cmd(l)){
 			fprintf(stderr, "Failed to execute the command.");

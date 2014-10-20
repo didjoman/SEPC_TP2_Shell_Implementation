@@ -8,4 +8,5 @@
 
  #include "readcmd.h"
 
+void init_jobs();
 int exec_cmd(struct cmdline * cmd);

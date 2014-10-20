@@ -1,9 +1,121 @@
- #include "execcmd.h"
+#include "execcmd.h"
+#include "readcmd.h"
+#include <string.h>
 
-static int execute_commande(char** cmd){ /* return -1 when false, 0 when true. */
+struct job{
+    pid_t pid;
+    char* cmd;
+    struct job* next;
+};
+
+struct job* jobs = NULL;
+/*
+void init_jobs()
+{
+    struct job* new_job = (struct job*) malloc(sizeof(struct job));
+    if(!new_job){
+        errno = ENOMEM;
+        perror(0);
+        exit(EXIT_FAILURE);
+    }
+    jobs = new_job;
+
+    jobs->pid = -1;
+    jobs->cmd = NULL;
+    jobs->next = NULL;
+}
+*/
+
+static char* get_complete_cmd(char ** cmd)
+{
+    char* complete_cmd;
+    char** cmd_part = cmd;
+    bool first_time = true;
+    while(*cmd_part){
+        // Definition de la nouvelle taille
+        int size = (first_time) ? 
+                strlen(*cmd_part) + 1 : 
+                strlen(complete_cmd) + 1 + strlen(*cmd_part) + 1;
+        // Allocation de la mémoire nécessaire
+        char* tmp = realloc(complete_cmd, size);
+        if(tmp)
+            complete_cmd = tmp;
+        // Copie du "morceau de commande" dans le nom de commande
+        if(first_time)
+            sprintf(complete_cmd, "%s", *cmd_part);
+        else
+            sprintf(complete_cmd, "%s %s", complete_cmd, *cmd_part);
+        ++cmd_part;
+        first_time = false;
+    }
+
+    return complete_cmd;
+
+}
+
+static void add_job(pid_t pid,char** cmd)
+{
+    struct job* new_job = (struct job*) malloc(sizeof(struct job));
+    if(!new_job){
+        errno = ENOMEM;
+        perror(0);
+        exit(EXIT_FAILURE);
+    }
+
+    new_job->pid = pid;
+    new_job->next = jobs;
+
+    // On fait une copie de cmd
+    new_job->cmd = get_complete_cmd(cmd);
+
+
+    jobs = new_job;
+}
+
+static struct job* remove_job(pid_t pid)
+{
+    // On recherche l'élément à supprimer
+    struct job *last_one = NULL;
+    struct job *tmp = jobs;
+    while(tmp && tmp->pid != pid){
+        last_one = tmp;
+        tmp = tmp->next;
+    }   
+
+    // Si on l'a trouvé on l'enlève.
+    if(tmp){
+        last_one->next = tmp->next;
+        tmp->next = NULL;        
+    }
+
+    return tmp;
+}
+
+/*
+static void free_job(struct job** j){
+    free((*j)->cmd);
+    // tmp->next MUST BE NULL
+    free(*j);
+}
+*/
+
+
+static void print_jobs()
+{
+    struct job *tmp = jobs;
+    while(tmp){
+        printf("%d ", tmp->pid);
+        fflush(stdout);
+        printf("%s\n", tmp->cmd);
+        tmp = tmp->next;
+    }   
+}
+
+static int execute_commande(char** cmd)
+{ 
     if(cmd[0] == NULL)
-        return -1;
-    
+        return false;
+
     execvp(cmd[0], cmd);
     perror("Fail of execvp");
     exit(EXIT_FAILURE);
@@ -12,28 +124,71 @@ static int execute_commande(char** cmd){ /* return -1 when false, 0 when true. *
 
 int exec_cmd(struct cmdline * cmd)
 {
-    int nb = 1;
+        if(cmd->seq[0]== NULL)
+            return true;
+
         pid_t pid = fork();  
 
-        if(pid == -1){
+        switch(pid){
+        // Problème lors du fork
+        case -1 :
             perror("problem while forking ...");
             exit(EXIT_FAILURE);
-        }
-    
-        if (pid == 0) {  /* le programme fils exectue les commandes */
-            for(int i=0; i<nb; ++i){ /* Dans notre cas, nb est toujours = 1 (car execution d'une commande)*/
-                if(execute_commande(cmd->seq[i]) == -1){
+        
+        // Processus fils (execute les commandes)
+        case 0: 
+            for (int i=0; cmd->seq[i]!=0; i++) {
+                if(!strcmp(*cmd->seq[i], "jobs"))
+                    print_jobs();
+                else if(execute_commande(cmd->seq[i]) == -1){
                     //libere(result);
                     perror("command not found.");
                     return false; /*-1*/
                 }
             }
-        }
-        else{ /* père */
-            if (!cmd->bg){ /* Absence de &, donc on attend la réponse du fils. */
-                wait(NULL);
+        // Processus père        
+        default:
+            // Execution avec &, on n'attend pas la terminaison du fils.
+            if (cmd->bg){
+                add_job(pid, cmd->seq[0]);
+                return true;
             }
-             /* Dans les autres cas (= présence de & dans ligne de commande) on n'attends pas le résulat. */
+
+            // Execution sans &, on attend la terminaison du fils.
+            //wait(NULL);
+            int status;
+            pid_t end_id;
+                
+            do{
+                end_id = waitpid(pid, &status, WCONTINUED|WUNTRACED);
+                // Erreur du waitpid :
+                if (end_id == -1) {
+                    perror("Error in waitpid");
+                    exit(EXIT_FAILURE);
+                }
+
+                // Traitements spécifique en fonction du statut d'arrêt 
+                // du processus fils :
+                if (WIFEXITED(status)) {
+                    printf("child process (%d) terminated normally\n", end_id);
+                    struct job* job_removed = remove_job(end_id);
+                    (void) job_removed;
+                    /*
+                    if(job_removed != NULL)
+                        free_job(&job_removed);
+                    */
+                } else if (WIFSIGNALED(status)) {
+                    printf("child process was terminated by a signal \
+                            (%d)\n", WTERMSIG(status));
+                } else if (WIFSTOPPED(status)) {
+                    printf("Child process was stopped by delivery of \
+                           a signal (%d)\n", WSTOPSIG(status));
+                }
+
+            }  while (!WIFEXITED(status) && !WIFSIGNALED(status));
+                
         }
+             /* Dans les autres cas (= présence de & dans ligne de commande) on n'attends pas le résulat. */
+        
         return true;
 }
