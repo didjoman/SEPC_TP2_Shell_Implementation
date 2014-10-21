@@ -24,7 +24,7 @@ int main() {
 	while (1) {
 		struct cmdline *l;
 		char *prompt = "ensishell>";
-
+		update_list_of_jobs();
 		l = readcmd(prompt);
 
 		/* If input stream closed, normal termination */
