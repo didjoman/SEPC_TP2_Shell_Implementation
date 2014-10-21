@@ -9,22 +9,6 @@ struct job{
 };
 
 struct job* jobs = NULL;
-/*
-void init_jobs(void)
-{
-    struct job* new_job = (struct job*) malloc(sizeof(struct job));
-    if(!new_job){
-        errno = ENOMEM;
-        perror(0);
-        exit(EXIT_FAILURE);
-    }
-    jobs = new_job;
-
-    jobs->pid = -1;
-    jobs->cmd = NULL;
-    jobs->next = NULL;
-}
-*/
 
 static char* get_complete_cmd(char ** cmd)
 {
@@ -192,39 +176,7 @@ int exec_cmd(struct cmdline * cmd)
 
             // Execution sans &, on attend la terminaison du fils.
             wait(NULL);
-            /*
-            int status;
-            pid_t end_id;
-                
-            do{
-                end_id = waitpid(pid, &status, WCONTINUED|WUNTRACED);
-                // Erreur du waitpid :
-                if (end_id == -1) {
-                    perror("Error in waitpid");
-                    exit(EXIT_FAILURE);
-                }
-
-                // Traitements spécifique en fonction du statut d'arrêt 
-                // du processus fils :
-                if (WIFEXITED(status)) {
-                    printf("child process (%d) terminated normally\n", end_id);
-                    struct job* job_removed = remove_job(end_id);
-                    (void) job_removed;
-                    //if(job_removed != NULL)
-                    //    free_job(&job_removed);
-                    
-                } else if (WIFSIGNALED(status)) {
-                    printf("child process was terminated by a signal \
-                            (%d)\n", WTERMSIG(status));
-                } else if (WIFSTOPPED(status)) {
-                    printf("Child process was stopped by delivery of \
-                           a signal (%d)\n", WSTOPSIG(status));
-                }
-
-            }  while (!WIFEXITED(status) && !WIFSIGNALED(status));
-            */
         }
-             /* Dans les autres cas (= présence de & dans ligne de commande) on n'attends pas le résulat. */
         
         return true;
 }
