@@ -6,13 +6,25 @@
 
 #IncludeRegexTransform: 
 
+/home/alexandre/documents/cours/2A/SEPC/sepc_tp2/src/ensishell.c
+stdio.h
+-
+stdlib.h
+-
+variante.h
+/home/alexandre/documents/cours/2A/SEPC/sepc_tp2/src/variante.h
+readcmd.h
+/home/alexandre/documents/cours/2A/SEPC/sepc_tp2/src/readcmd.h
+execcmd.h
+/home/alexandre/documents/cours/2A/SEPC/sepc_tp2/src/execcmd.h
+jobs.h
+/home/alexandre/documents/cours/2A/SEPC/sepc_tp2/src/jobs.h
+
 /home/alexandre/documents/cours/2A/SEPC/sepc_tp2/src/execcmd.c
 execcmd.h
 /home/alexandre/documents/cours/2A/SEPC/sepc_tp2/src/execcmd.h
-readcmd.h
-/home/alexandre/documents/cours/2A/SEPC/sepc_tp2/src/readcmd.h
-string.h
--
+jobs.h
+/home/alexandre/documents/cours/2A/SEPC/sepc_tp2/src/jobs.h
 
 /home/alexandre/documents/cours/2A/SEPC/sepc_tp2/src/execcmd.h
 stdbool.h
@@ -29,8 +41,34 @@ sys/types.h
 -
 sys/wait.h
 -
+string.h
+-
 readcmd.h
 /home/alexandre/documents/cours/2A/SEPC/sepc_tp2/src/readcmd.h
 
+/home/alexandre/documents/cours/2A/SEPC/sepc_tp2/src/jobs.c
+jobs.h
+/home/alexandre/documents/cours/2A/SEPC/sepc_tp2/src/jobs.h
+
+/home/alexandre/documents/cours/2A/SEPC/sepc_tp2/src/jobs.h
+stdbool.h
+-
+unistd.h
+-
+stdio.h
+-
+errno.h
+-
+stdlib.h
+-
+sys/types.h
+-
+sys/wait.h
+-
+string.h
+-
+
 /home/alexandre/documents/cours/2A/SEPC/sepc_tp2/src/readcmd.h
+
+/home/alexandre/documents/cours/2A/SEPC/sepc_tp2/src/variante.h
 

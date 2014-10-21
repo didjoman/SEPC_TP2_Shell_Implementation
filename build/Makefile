@@ -202,6 +202,30 @@ src/execcmd.c.s:
 	$(MAKE) -f CMakeFiles/ensishell.dir/build.make CMakeFiles/ensishell.dir/src/execcmd.c.s
 .PHONY : src/execcmd.c.s
 
+src/jobs.o: src/jobs.c.o
+.PHONY : src/jobs.o
+
+# target to build an object file
+src/jobs.c.o:
+	$(MAKE) -f CMakeFiles/ensishell.dir/build.make CMakeFiles/ensishell.dir/src/jobs.c.o
+.PHONY : src/jobs.c.o
+
+src/jobs.i: src/jobs.c.i
+.PHONY : src/jobs.i
+
+# target to preprocess a source file
+src/jobs.c.i:
+	$(MAKE) -f CMakeFiles/ensishell.dir/build.make CMakeFiles/ensishell.dir/src/jobs.c.i
+.PHONY : src/jobs.c.i
+
+src/jobs.s: src/jobs.c.s
+.PHONY : src/jobs.s
+
+# target to generate assembly for a file
+src/jobs.c.s:
+	$(MAKE) -f CMakeFiles/ensishell.dir/build.make CMakeFiles/ensishell.dir/src/jobs.c.s
+.PHONY : src/jobs.c.s
+
 src/readcmd.o: src/readcmd.c.o
 .PHONY : src/readcmd.o
 
@@ -245,6 +269,9 @@ help:
 	@echo "... src/execcmd.o"
 	@echo "... src/execcmd.i"
 	@echo "... src/execcmd.s"
+	@echo "... src/jobs.o"
+	@echo "... src/jobs.i"
+	@echo "... src/jobs.s"
 	@echo "... src/readcmd.o"
 	@echo "... src/readcmd.i"
 	@echo "... src/readcmd.s"

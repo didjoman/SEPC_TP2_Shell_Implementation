@@ -11,6 +11,7 @@
 #include "variante.h"
 #include "readcmd.h"
 #include "execcmd.h"
+#include "jobs.h"
 
 #ifndef VARIANTE
 #error "Variante non défini !!"

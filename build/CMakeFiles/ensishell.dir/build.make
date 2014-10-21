@@ -118,11 +118,35 @@ CMakeFiles/ensishell.dir/src/execcmd.c.o.provides: CMakeFiles/ensishell.dir/src/
 
 CMakeFiles/ensishell.dir/src/execcmd.c.o.provides.build: CMakeFiles/ensishell.dir/src/execcmd.c.o
 
+CMakeFiles/ensishell.dir/src/jobs.c.o: CMakeFiles/ensishell.dir/flags.make
+CMakeFiles/ensishell.dir/src/jobs.c.o: ../src/jobs.c
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/alexandre/documents/cours/2A/SEPC/sepc_tp2/build/CMakeFiles $(CMAKE_PROGRESS_4)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building C object CMakeFiles/ensishell.dir/src/jobs.c.o"
+	/usr/bin/cc  $(C_DEFINES) $(C_FLAGS) -o CMakeFiles/ensishell.dir/src/jobs.c.o   -c /home/alexandre/documents/cours/2A/SEPC/sepc_tp2/src/jobs.c
+
+CMakeFiles/ensishell.dir/src/jobs.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/ensishell.dir/src/jobs.c.i"
+	/usr/bin/cc  $(C_DEFINES) $(C_FLAGS) -E /home/alexandre/documents/cours/2A/SEPC/sepc_tp2/src/jobs.c > CMakeFiles/ensishell.dir/src/jobs.c.i
+
+CMakeFiles/ensishell.dir/src/jobs.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/ensishell.dir/src/jobs.c.s"
+	/usr/bin/cc  $(C_DEFINES) $(C_FLAGS) -S /home/alexandre/documents/cours/2A/SEPC/sepc_tp2/src/jobs.c -o CMakeFiles/ensishell.dir/src/jobs.c.s
+
+CMakeFiles/ensishell.dir/src/jobs.c.o.requires:
+.PHONY : CMakeFiles/ensishell.dir/src/jobs.c.o.requires
+
+CMakeFiles/ensishell.dir/src/jobs.c.o.provides: CMakeFiles/ensishell.dir/src/jobs.c.o.requires
+	$(MAKE) -f CMakeFiles/ensishell.dir/build.make CMakeFiles/ensishell.dir/src/jobs.c.o.provides.build
+.PHONY : CMakeFiles/ensishell.dir/src/jobs.c.o.provides
+
+CMakeFiles/ensishell.dir/src/jobs.c.o.provides.build: CMakeFiles/ensishell.dir/src/jobs.c.o
+
 # Object files for target ensishell
 ensishell_OBJECTS = \
 "CMakeFiles/ensishell.dir/src/readcmd.c.o" \
 "CMakeFiles/ensishell.dir/src/ensishell.c.o" \
-"CMakeFiles/ensishell.dir/src/execcmd.c.o"
+"CMakeFiles/ensishell.dir/src/execcmd.c.o" \
+"CMakeFiles/ensishell.dir/src/jobs.c.o"
 
 # External object files for target ensishell
 ensishell_EXTERNAL_OBJECTS =
@@ -130,6 +154,7 @@ ensishell_EXTERNAL_OBJECTS =
 ensishell: CMakeFiles/ensishell.dir/src/readcmd.c.o
 ensishell: CMakeFiles/ensishell.dir/src/ensishell.c.o
 ensishell: CMakeFiles/ensishell.dir/src/execcmd.c.o
+ensishell: CMakeFiles/ensishell.dir/src/jobs.c.o
 ensishell: CMakeFiles/ensishell.dir/build.make
 ensishell: CMakeFiles/ensishell.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking C executable ensishell"
@@ -142,6 +167,7 @@ CMakeFiles/ensishell.dir/build: ensishell
 CMakeFiles/ensishell.dir/requires: CMakeFiles/ensishell.dir/src/readcmd.c.o.requires
 CMakeFiles/ensishell.dir/requires: CMakeFiles/ensishell.dir/src/ensishell.c.o.requires
 CMakeFiles/ensishell.dir/requires: CMakeFiles/ensishell.dir/src/execcmd.c.o.requires
+CMakeFiles/ensishell.dir/requires: CMakeFiles/ensishell.dir/src/jobs.c.o.requires
 .PHONY : CMakeFiles/ensishell.dir/requires
 
 CMakeFiles/ensishell.dir/clean:

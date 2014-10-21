@@ -3,12 +3,17 @@
 
 CMakeFiles/ensishell.dir/src/ensishell.c.o: ../src/ensishell.c
 CMakeFiles/ensishell.dir/src/ensishell.c.o: ../src/execcmd.h
+CMakeFiles/ensishell.dir/src/ensishell.c.o: ../src/jobs.h
 CMakeFiles/ensishell.dir/src/ensishell.c.o: ../src/readcmd.h
 CMakeFiles/ensishell.dir/src/ensishell.c.o: ../src/variante.h
 
 CMakeFiles/ensishell.dir/src/execcmd.c.o: ../src/execcmd.c
 CMakeFiles/ensishell.dir/src/execcmd.c.o: ../src/execcmd.h
+CMakeFiles/ensishell.dir/src/execcmd.c.o: ../src/jobs.h
 CMakeFiles/ensishell.dir/src/execcmd.c.o: ../src/readcmd.h
+
+CMakeFiles/ensishell.dir/src/jobs.c.o: ../src/jobs.c
+CMakeFiles/ensishell.dir/src/jobs.c.o: ../src/jobs.h
 
 CMakeFiles/ensishell.dir/src/readcmd.c.o: ../src/readcmd.c
 CMakeFiles/ensishell.dir/src/readcmd.c.o: ../src/readcmd.h

@@ -2,6 +2,7 @@ FILE(REMOVE_RECURSE
   "CMakeFiles/ensishell.dir/src/readcmd.c.o"
   "CMakeFiles/ensishell.dir/src/ensishell.c.o"
   "CMakeFiles/ensishell.dir/src/execcmd.c.o"
+  "CMakeFiles/ensishell.dir/src/jobs.c.o"
   "ensishell.pdb"
   "ensishell"
 )
