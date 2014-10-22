@@ -58,7 +58,7 @@ int main() {
 		}
 		*/
 		/* Execute the command : */
-		if(!exec_cmd(l)){
+		if(!execute_ligne_commande(l)) { 
 			fprintf(stderr, "Failed to execute the command.");
 			exit(EXIT_FAILURE);
 		}

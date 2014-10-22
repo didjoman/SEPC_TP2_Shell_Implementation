@@ -12,6 +12,6 @@
 
  #include "readcmd.h"
 
-int exec_cmd(struct cmdline * cmd);
+int execute_ligne_commande(struct cmdline* cmd);
 
 #endif

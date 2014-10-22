@@ -2,61 +2,109 @@
 #include "jobs.h"
 
 /*
-    Execute la commande passée en paramètre, en appelant execvp.
-*/
+   Execute la commande passée en paramètre, en appelant execvp.
+   */
 static int execute_commande(char** cmd)
 { 
-    if(cmd[0] == NULL)
-        return false;
+        if(cmd[0] == NULL)
+                return false;
 
-    execvp(cmd[0], cmd);
-    perror("Fail of execvp");
-    exit(EXIT_FAILURE);
+        execvp(cmd[0], cmd);
+        perror("Fail of execvp");
+        exit(EXIT_FAILURE);
 }
 
 /*
-    Créé un processus fils servant à lancer la commande passée en paramètre.
-    Puis lance la commande dans le processus fils créé.
-    Si !cmd->bg, Le processus père attend la fin de l'exécution du fils.
-*/
-int exec_cmd(struct cmdline * cmd)
+   Créé un processus fils servant à lancer la commande passée en paramètre.
+   Puis lance la commande dans le processus fils créé.
+   Si !cmd->bg, Le processus père attend la fin de l'exécution du fils.
+   */
+int exec_cmd(int in, int out, struct cmdline * cmd, int i)
 {
-        if(cmd->seq[0]== NULL)
-            return true;
 
         pid_t pid = fork();  
 
-        switch(pid){
-        // Problème lors du fork :
+        switch(pid) {
+                // Problème lors du fork :
         case -1 :
-            perror("problem while forking ...");
-            exit(EXIT_FAILURE);
-        
-        // Processus fils (execute les commandes)
+                perror("problem while forking ...");
+                exit(EXIT_FAILURE);
+
+                // Processus fils (execute les commandes)
         case 0: 
-            // Lance l'ensemble des commandes séparées par les pipes
-            // TODO : gérer les pipes ici.
-            for (int i=0; cmd->seq[i]!=0; i++) {
+                // Lance l'ensemble des commandes séparées par les pipes
+
+                // Si il y a une autre commande avant
+                if (in != 0) {
+                        close(0);
+                        dup2(in,0);
+                        close(in);
+                }
+
+                // Si il y a une commande après
+                if (out != 1) {
+                        close(1);
+                        dup2(out,1);
+                        close(out);
+                }
+
                 // Cas particulier, "jobs" est exécutée par le shell
                 if(!strcmp(*cmd->seq[i], "jobs"))
-                    print_jobs();
+                        print_jobs();
                 // Cas général
                 else if(execute_commande(cmd->seq[i]) == -1){
-                    perror("command not found.");
-                    return false; /*-1*/
+                        perror("command not found.");
+                        return false; /*-1*/
                 }
-            }
-        // Processus père (attends ou non la mort du fils)     
+                // Processus père (attends ou non la mort du fils)     
         default:
-            // Execution avec &, on n'attend pas la terminaison du fils.
-            if (cmd->bg){
-                add_job(pid, cmd->seq[0]);
-                return true;
-            }
 
-            // Execution sans &, on attend la terminaison du fils.
-            wait(NULL);
+                //Si il y a eu une commande avant
+                if (in != 0)
+                        close(in);
+
+                //Si il y a eu une commande après
+                if (out != 1)
+                        close(out);
+
+                // Execution avec &, on n'attend pas la terminaison du fils.
+                if (cmd->bg){
+                        add_job(pid, cmd->seq[0]);
+                        return true;
+                }
+
+                // Execution sans &, on attend la terminaison du fils.
+                wait(NULL);
         }
-        
+
+        return true;
+}
+
+int execute_ligne_commande(struct cmdline* cmd) 
+{
+        int myPipe[2];
+        int in, out;
+
+        if(cmd->seq[0]== NULL)
+                return true;
+
+        //Pour la première commande, l'entrée est l'entrée standard
+        in = 0;
+
+        for (int i = 0; cmd->seq[i] != 0; i ++) {
+
+                /*Si il y a une commande après la commande courante on crée
+                  pipe*/                   
+                if (cmd->seq[i+1] != 0)
+                        pipe(myPipe);
+
+                out = (cmd->seq[i+1] != 0) ? myPipe[1] : 1;
+
+                if (exec_cmd(in, out, cmd, i) == -1) {
+                        perror("error while launching command");
+                        exit(EXIT_FAILURE);
+                }
+                in = myPipe[0];
+        }
         return true;
 }
