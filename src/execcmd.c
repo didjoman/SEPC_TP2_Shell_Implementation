@@ -106,7 +106,8 @@ int execute_ligne_commande(struct cmdline* cmd)
                         out = myPipe[1];
                 }
                 else if (cmd->out)
-                        out = open(cmd->out, O_WRONLY);
+                        out = open(cmd->out, O_RDWR | O_CREAT, S_IRUSR | S_IRGRP
+                                        | S_IROTH);
                 else
                         out = 1;
 
