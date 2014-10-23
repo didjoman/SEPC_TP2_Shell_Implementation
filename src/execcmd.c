@@ -89,16 +89,26 @@ int execute_ligne_commande(struct cmdline* cmd)
                 return true;
 
         //Pour la première commande, l'entrée est l'entrée standard
-        in = 0;
+        //ou un fichier spécifié en entrée.
+        in = cmd->in ? open (cmd->in, O_RDONLY) : 0;
 
         for (int i = 0; cmd->seq[i] != 0; i ++) {
 
                 /*Si il y a une commande après la commande courante on crée
-                  pipe*/                   
-                if (cmd->seq[i+1] != 0)
+                 * un pipe.
+                 * 3 cas pour la sortie :
+                 * - on écrit dans un pipe 
+                 * - on écrit dans un fichier
+                 * - on écrit sur la sortie standard
+                 */
+                if (cmd->seq[i+1] != 0) {
                         pipe(myPipe);
-
-                out = (cmd->seq[i+1] != 0) ? myPipe[1] : 1;
+                        out = myPipe[1];
+                }
+                else if (cmd->out)
+                        out = open(cmd->out, O_WRONLY);
+                else
+                        out = 1;
 
                 if (exec_cmd(in, out, cmd, i) == -1) {
                         perror("error while launching command");
