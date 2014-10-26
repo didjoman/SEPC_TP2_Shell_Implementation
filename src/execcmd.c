@@ -36,14 +36,15 @@ int exec_cmd(int in, int out, struct cmdline * cmd, int i)
 
                 // Si il y a une autre commande avant
                 if (in != 0) {
-                        close(0);
+                        // Le file descriptor est maintenant une copie de in
                         dup2(in,0);
+                        // On ferme in, car on en a fait une copie.
                         close(in);
                 }
 
                 // Si il y a une commande après
                 if (out != 1) {
-                        close(1);
+                        // Ferme "out" et le duplique sur le fd 1
                         dup2(out,1);
                         close(out);
                 }
@@ -74,7 +75,12 @@ int exec_cmd(int in, int out, struct cmdline * cmd, int i)
                 }
 
                 // Execution sans &, on attend la terminaison du fils.
-                wait(NULL);
+                /* Attention ! 0n attend dans deux cas :
+                 *  - commande unique (sans pipe) lancée sans &
+                 *  - commande pipelinée ET dernière commande du pipe
+                 */
+                if(!cmd->bg && cmd->seq[i + 1] == NULL)
+                        wait(NULL);
         }
 
         return true;
@@ -89,7 +95,7 @@ int execute_ligne_commande(struct cmdline* cmd)
                 return true;
 
         //Pour la première commande, l'entrée est l'entrée standard
-        //ou un fichier spécifié en entrée.
+        //ou un fichier spécifié entime -p sleep 3 | echo toto entrée.
         in = cmd->in ? open (cmd->in, O_RDONLY) : 0;
 
         for (int i = 0; cmd->seq[i] != 0; i ++) {
@@ -117,5 +123,13 @@ int execute_ligne_commande(struct cmdline* cmd)
                 }
                 in = myPipe[0];
         }
+        
+        // Si il y a un pipe, on attend la mort de tous les processus créés.
+        if(!cmd->bg && cmd->seq[1] != NULL){
+                pid_t pid;
+                int status;        
+                while ((pid = wait(&status)) != -1); 
+        }
+        
         return true;
 }
