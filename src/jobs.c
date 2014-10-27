@@ -1,13 +1,5 @@
 #include "jobs.h"
 
-
-// Structure servant à stocker la liste des processus lancés en background.
-struct job{
-    pid_t pid;
-    char* cmd;
-    struct job* next;
-};
-
 struct job* jobs = NULL;
 
 /*
@@ -55,12 +47,27 @@ void add_job(pid_t pid,char** cmd)
 
     new_job->pid = pid;
     new_job->next = jobs;
+    gettimeofday(&new_job->time, NULL);
 
     // On fait une copie de cmd
     new_job->cmd = get_complete_cmd(cmd);
 
 
     jobs = new_job;
+}
+
+/*
+    Recherche un job à partir de son pid, dans la liste de jobs.
+    @param: pid = pid du job à rechercher dans la liste.
+*/
+struct job* get_job(pid_t pid)
+{
+    // On recherche l'élément
+    struct job *tmp = jobs;
+    while(tmp && tmp->pid != pid)
+        tmp = tmp->next;
+
+    return tmp;
 }
 
 /*
@@ -111,6 +118,7 @@ void print_jobs(void)
     while(tmp){
         printf("%d ", tmp->pid);
         fflush(stdout);
+        //printf("%lld ", (long long)tmp->time.tv_sec);
         printf("%s\n", tmp->cmd);
         tmp = tmp->next;
     }   

@@ -6,6 +6,20 @@
 
 #IncludeRegexTransform: 
 
+/home/alexandre/documents/cours/2A/SEPC/sepc_tp2/src/ensishell.c
+stdio.h
+-
+stdlib.h
+-
+variante.h
+/home/alexandre/documents/cours/2A/SEPC/sepc_tp2/src/variante.h
+readcmd.h
+/home/alexandre/documents/cours/2A/SEPC/sepc_tp2/src/readcmd.h
+execcmd.h
+/home/alexandre/documents/cours/2A/SEPC/sepc_tp2/src/execcmd.h
+jobs.h
+/home/alexandre/documents/cours/2A/SEPC/sepc_tp2/src/jobs.h
+
 /home/alexandre/documents/cours/2A/SEPC/sepc_tp2/src/execcmd.c
 execcmd.h
 /home/alexandre/documents/cours/2A/SEPC/sepc_tp2/src/execcmd.h
@@ -33,6 +47,8 @@ fcntl.h
 -
 unistd.h
 -
+signal.h
+-
 readcmd.h
 /home/alexandre/documents/cours/2A/SEPC/sepc_tp2/src/readcmd.h
 
@@ -51,8 +67,12 @@ sys/types.h
 -
 sys/wait.h
 -
+sys/time.h
+-
 string.h
 -
 
 /home/alexandre/documents/cours/2A/SEPC/sepc_tp2/src/readcmd.h
+
+/home/alexandre/documents/cours/2A/SEPC/sepc_tp2/src/variante.h
 

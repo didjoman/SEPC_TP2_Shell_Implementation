@@ -1,6 +1,65 @@
 #include "execcmd.h"
 #include "jobs.h"
 
+/*  [OPTION : Temps de Calcul]
+ *  Ce traitant est appelé à la réception d'un signal SIGCHLD par le processus 
+ *  père.
+ *  Il affiche la durée d'exécution du processus fils qui vient de se terminer.
+ */
+static void handler_sigchild (int sig, siginfo_t *siginfo, void *context)
+{
+        struct job* j = get_job(siginfo->si_pid);
+        char time_string[15];
+
+        // If the jobs is not found in the list of jobs : 
+        if(!j)
+        return;
+        
+        // We work out the elpased time between start and end of the process
+        struct timeval time_interval;
+        gettimeofday(&time_interval, NULL);
+        
+        time_interval.tv_sec -= j->time.tv_sec;
+        time_interval.tv_usec -= (j->time.tv_usec / 1000000);
+        
+        // Formating of the string
+        int ss = (int) (time_interval.tv_sec) % 60 ;
+        int mm = (int) ((time_interval.tv_sec / 60) % 60);
+        int hh = (int) ((time_interval.tv_sec / (3600)) % 24);
+        // String containing the micro seconds :
+        char tmp_micro_secs[19];
+        sprintf(tmp_micro_secs, "%04lld", (long long) time_interval.tv_usec);
+        char micro_secs[4];
+        strncpy(micro_secs, tmp_micro_secs, 4);
+        // String containing the whole elpased time on the format hh:mm:ss.ms
+        sprintf(time_string, "%02d:%02d:%02d.%s", hh, mm, ss, micro_secs);
+        time_string[14] = '\0';
+        
+        // Printing of the string : 
+	printf ("%ld \"%s\", elapsed time: %s\n", 
+                (long)j->pid, j->cmd, time_string);
+        fflush(stdout);
+        
+        // Finally we remove the job from the list of jobs :
+        /*
+         ?? Why to do it here ??
+         |-> The signal has been caught by this handler and will never be caught
+         in the waitpid() of the function update_list_of_jobs() (called before 
+         the prompt).
+         The job will therefore never be removed from the list of jobs if we 
+         don't do it now.
+         */
+
+        struct job* job_removed = remove_job(siginfo->si_pid);
+        if(job_removed != NULL){
+            free_job(&job_removed);
+            print_jobs();
+            printf("\n");
+        }
+
+        //while (waitpid((pid_t)(-1), 0, WNOHANG) > 0);
+}
+
 /*
    Execute la commande passée en paramètre, en appelant execvp.
    */
@@ -29,7 +88,7 @@ int exec_cmd(int in, int out, struct cmdline * cmd, int i)
         case -1 :
                 perror("problem while forking ...");
                 exit(EXIT_FAILURE);
-
+                break;
                 // Processus fils (execute les commandes)
         case 0: 
                 // Lance l'ensemble des commandes séparées par les pipes
@@ -57,6 +116,7 @@ int exec_cmd(int in, int out, struct cmdline * cmd, int i)
                         perror("command not found.");
                         return false; /*-1*/
                 }
+                break;
                 // Processus père (attends ou non la mort du fils)     
         default:
 
@@ -71,9 +131,21 @@ int exec_cmd(int in, int out, struct cmdline * cmd, int i)
                 // Execution avec &, on n'attend pas la terminaison du fils.
                 if (cmd->bg){
                         add_job(pid, cmd->seq[0]);
+                        
+                        // Temps de calcul d'un processus fils : 
+                        struct sigaction sa;
+                        sa.sa_sigaction = handler_sigchild;
+                        sigemptyset(&sa.sa_mask);
+                        sa.sa_flags = SA_SIGINFO; 
+                        
+                        if (sigaction(SIGCHLD, &sa, NULL) == -1){
+                                perror ("sigaction");
+                                exit(EXIT_FAILURE);
+                        }
+                        
                         return true;
                 }
-
+            
                 // Execution sans &, on attend la terminaison du fils.
                 /* Attention ! 0n attend dans deux cas :
                  *  - commande unique (sans pipe) lancée sans &
@@ -81,6 +153,7 @@ int exec_cmd(int in, int out, struct cmdline * cmd, int i)
                  */
                 if(!cmd->bg && cmd->seq[i + 1] == NULL)
                         wait(NULL);
+                break;
         }
 
         return true;
