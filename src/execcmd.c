@@ -39,25 +39,6 @@ static void handler_sigchild (int sig, siginfo_t *siginfo, void *context)
 	printf ("%ld \"%s\", elapsed time: %s\n", 
                 (long)j->pid, j->cmd, time_string);
         fflush(stdout);
-        
-        // Finally we remove the job from the list of jobs :
-        /*
-         ?? Why to do it here ??
-         |-> The signal has been caught by this handler and will never be caught
-         in the waitpid() of the function update_list_of_jobs() (called before 
-         the prompt).
-         The job will therefore never be removed from the list of jobs if we 
-         don't do it now.
-         */
-
-        struct job* job_removed = remove_job(siginfo->si_pid);
-        if(job_removed != NULL){
-            free_job(&job_removed);
-            print_jobs();
-            printf("\n");
-        }
-
-        //while (waitpid((pid_t)(-1), 0, WNOHANG) > 0);
 }
 
 /*
@@ -109,8 +90,10 @@ int exec_cmd(int in, int out, struct cmdline * cmd, int i)
                 }
 
                 // Cas particulier, "jobs" est exécutée par le shell
-                if(!strcmp(*cmd->seq[i], "jobs"))
+                if(!strcmp(*cmd->seq[i], "jobs")){
                         print_jobs();
+			exit(EXIT_SUCCESS);
+		}
                 // Cas général
                 else if(execute_commande(cmd->seq[i]) == -1){
                         perror("command not found.");
