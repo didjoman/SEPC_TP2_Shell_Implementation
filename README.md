@@ -1,27 +1,57 @@
-ensimag-shell
+Ensimag-shell
 =============
 
-Squelette pour le TP shell
+These files implement a mini-shell.
+This project was an assignment for the course of "Operating System & Concurrent computing" at Ensimag ("Système d'Exploitation et Programmation Concurrente" in french).
 
-Tous les fichiers sont sous licence GPLv3+
+All the files are covered by the licence GPLV3+
 
 Introduction
 ----------
 
-Ces fichiers servent de base à un TP sur le shell de commande à la Unix.
+The goal of this assignment was to implement a mini-shell capable of launching commands.
+Different features were implemented : 
+- Launching of a command in foreground
+- Launching of a command in background (with &)
+- Listing of all the process launched (implementation of the command jobs).
+- Multiple Pipes ( | in shell)
+- I/O Redirections ( > in shell)
+- Calculation time (given at the termination of a process).
 
-Spécificités de ce squelette:
-- plusieurs variantes (choix par sha512 sur les logins des étudiants)
-- jeux de tests fournis aux étudiants
-
-Compilation et lancement des tests
+How to build the project
 ----------
 
-cd ensimag-shell
-cd build
-cmake ..
-make
-make test
+> `cd SEPC_TP2_Shell_Implementation`
+
+> `cd build`
+
+> `cmake ..`
+
+> `make`
+
+Usage
+----------
+We can test the mini-shell (after having compilled it) by launching the following commands : 
+
+
+> `cd SEPC_TP2_Shell_Implementation`
+
+> `cd build`
+
+> `./ensishell`
+
+Tests
+----------
+Unit-tests (Google tests) have been provided by the professors to check the validity of the shell.
+In order to launch it : 
+
+> `cd SEPC_TP2_Shell_Implementation`
+
+> `cd build`
+
+> `make test`
+
+> `make check`
 
 
 
